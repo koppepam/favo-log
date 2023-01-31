@@ -3,6 +3,7 @@ html(lang="ja")
   head
     meta(charset="UTF-8")
     meta(name="posts" content= posts)
+    meta(name="user" content= user)
     link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css")
     link(rel="stylesheet",
     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
@@ -32,7 +33,7 @@ html(lang="ja")
       div(class=`${cardClass}` id=`favo-${post.id}`)
         - let isDeletable = (user === post.postedBy || user === 'admin')
         div.card-header
-          span.h4.float-left #{post.cat || 'タイトルなし'}
+          span.h4.float-left(style="white-space:pre;") #{post.cat || 'タイトルなし'}
           button(type="button" class="share-button" data-share= post.id).btn.btn-success.float-right #[i.bi.bi-share] 共有
           if isDeletable
             form(method="post" action="/posts/delete")
@@ -58,7 +59,9 @@ html(lang="ja")
 <!-- 検索機能 -->
     script.
       let meta = document.querySelector('meta[name="posts"]');
+      let usermeta = document.querySelector('meta[name="user"]');
       const posts = JSON.parse(meta.content);
+      const user = parseInt(usermeta.content);
       const searchInput = document.getElementById('search-input');
       let searchDisplay = document.getElementById('search-display');
 
@@ -91,14 +94,19 @@ html(lang="ja")
         if (checkedPosts.length > 0){
           searchDisplay.innerHTML = `<h4>「${keyword}」が含まれる投稿</h4>`;
           for (const post of checkedPosts) {
+            let isDeletable = (user === post.postedBy || user === 'admin')
             searchDisplay.innerHTML += `
             <div class="card my-3">
               <div class="card-header">
-                <span class="h4 float-left">${post.cat?.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`) || 'タイトルなし'}</span>
-                <form method="post" action="/posts/delete">
-                  <input type="hidden" name="id" value="${post.id}">
-                  <button class="btn btn-danger float-right" type="submit"><i class="bi bi-trash"></i> 削除</button>
-                </form>
+                <span class="h4 float-left" style="white-space:pre;">${sanitize(post.cat)?.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`) || 'タイトルなし'}</span>
+                ${
+                  isDeletable ? 
+                  `<form method="post" action="/posts/delete">
+                      <input type="hidden" name="id" value="${post.id}">
+                      <button class="btn btn-danger float-right" type="submit"><i class="bi bi-trash"></i> 削除</button>
+                    </form>` :
+                    ''
+                }
               </div>
               <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
@@ -109,7 +117,7 @@ html(lang="ja")
                   <small class="float-right">${dayjs(post.createdAt).format('YYYY年MM月DD日 HH時mm分ss秒')}</small>
                 </div>
                 <hr>
-                <p class="card-text">${post.content.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`)}</p>
+                <p class="card-text" style="white-space:pre; overflow:auto;">${sanitize(post.content).replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`)}</p>
               </div>
             </div>
             `;
@@ -130,6 +138,16 @@ html(lang="ja")
           const charCode = match.charCodeAt(0) + 0x60;
           return String.fromCharCode(charCode);
         });
+      }
+
+      //- htmlにしない
+      function sanitize(input) {
+        return input
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '$gt;')
+          .replace(/&/g, '&amp;')
+          .replace(/'/g, '&apos;')
+          .replace(/"/g, '&quot;');
       }
 
       //- 共有ボタン
