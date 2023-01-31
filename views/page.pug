@@ -94,15 +94,32 @@ html(lang="ja")
             searchDisplay.innerHTML += `
             <div class="card my-3">
               <div class="card-header">
-                <b class="float-left">${post.cat?.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`) || 'タイトルなし'}</b>
-              </div><div class="card-body">
-                <b>${post.postedBy.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`)}</b>
-                <small class="float-right">${dayjs(post.createdAt).format('YYYY年MM月DD日 HH時mm分ss秒')}</small>
+                <span class="h4 float-left">${post.cat?.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`) || 'タイトルなし'}</span>
+                <form method="post" action="/posts/delete">
+                  <input type="hidden" name="id" value="${post.id}">
+                  <button class="btn btn-danger float-right" type="submit"><i class="bi bi-trash"></i> 削除</button>
+                </form>
+              </div>
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <svg class="d-block bg-light rounded-circle mr-3" data-jdenticon-value="${post.postedBy}" width="30" height="30"></svg>
+                    <h5>${post.postedBy.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`)}</h5>
+                  </div>
+                  <small class="float-right">${dayjs(post.createdAt).format('YYYY年MM月DD日 HH時mm分ss秒')}</small>
+                </div>
+                <hr>
                 <p class="card-text">${post.content.replaceAll(keyword, `<strong style="color:red;">${keyword}</strong>`)}</p>
               </div>
             </div>
             `;
           }
+          const script = document.createElement('script');
+          script.setAttribute('src', "https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js");
+          script.setAttribute('async', '');
+          script.setAttribute('integrity', "sha384-yBhgDqxM50qJV5JPdayci8wCfooqvhFYbIKhv0hTtLvfeeyJMJCscRfFNKIxt43M");
+          script.setAttribute('crossorigin', "anonymous");
+          searchDisplay.appendChild(script);
         } else {
           searchDisplay.innerHTML = `<h4>「${keyword}」に一致する投稿はありませんでした</h4>`;
         }
@@ -127,19 +144,25 @@ html(lang="ja")
         });
       });
 
+    //- bootstrap
     script(src="https://code.jquery.com/jquery-3.4.1.slim.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js",
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl",
     crossorigin="anonymous")
 
+    //- 共有されたURLと投稿
     script.
       const hash = location.hash;
       const id = hash.match(/^#favo-(\d+)$/)?.[1];
 
       if (id) {
         const card = document.querySelector(`#favo-${id}`);
-        card.classList.remove('bg-primary');
-        card.classList.add('bg-secondary');
-        const cardTitle = card.querySelector('div.card-header > b');
-        cardTitle.innerHTML += `    <span class="badge bg-warning text-dark">共有された投稿</span>`;
+        if (card) {
+          card.classList.remove('bg-primary');
+          card.classList.add('bg-secondary', 'text-light');
+          const cardTitle = card.querySelector('div.card-header > span');
+          cardTitle.innerHTML += `    <span class="badge bg-warning text-dark">共有された投稿</span>`;
+        } else {
+          alert('共有された投稿は見つかりませんでした。');
+        }
       }
