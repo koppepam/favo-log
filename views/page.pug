@@ -39,11 +39,21 @@ html(lang="ja")
               input(type="hidden" name="id" value=post.id)
               button(type="submit").btn.btn-danger.float-right #[i.bi.bi-trash] 削除
         div.card-body
-          b #{post.postedBy}
-          small.float-right #{post.formattedCreatedAt}
+          div.d-flex.align-items-center.justify-content-between
+            div.d-flex.align-items-center
+              svg.d-block.bg-light.rounded-circle.mr-3(data-jdenticon-value=post.postedBy width="40" height="40")
+              h4 #{post.postedBy}
+            small #{post.formattedCreatedAt}
+          hr
           p.card-text(style="white-space:pre; overflow:auto;") #{post.content}
 
     script(src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js")
+
+<!-- アイコン -->
+    script(
+      src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js"
+      async integrity="sha384-yBhgDqxM50qJV5JPdayci8wCfooqvhFYbIKhv0hTtLvfeeyJMJCscRfFNKIxt43M"
+      crossorigin="anonymous")
 
 <!-- 検索機能 -->
     script.
