@@ -7,6 +7,7 @@ const html = pug.renderFile('./views/page.pug', {
   posts: [
     {
       id: 1,
+      cat: "<script>alert('test');</script>",
       content: "<script>alert('test');</script>",
       postedBy: 'guest1',
       createdAt: new Date(),

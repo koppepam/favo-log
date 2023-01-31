@@ -32,7 +32,7 @@ html(lang="ja")
       div(class=`${cardClass}` id=`favo-${post.id}`)
         - let isDeletable = (user === post.postedBy || user === 'admin')
         div.card-header
-          b.float-left #{post.cat || 'タイトルなし'}
+          span.h4.float-left #{post.cat || 'タイトルなし'}
           button(type="button" class="share-button" data-share= post.id).btn.btn-success.float-right #[i.bi.bi-share] 共有
           if isDeletable
             form(method="post" action="/posts/delete")
@@ -41,8 +41,8 @@ html(lang="ja")
         div.card-body
           div.d-flex.align-items-center.justify-content-between
             div.d-flex.align-items-center
-              svg.d-block.bg-light.rounded-circle.mr-3(data-jdenticon-value=post.postedBy width="40" height="40")
-              h4 #{post.postedBy}
+              svg.d-block.bg-light.rounded-circle.mr-3(data-jdenticon-value=post.postedBy width="30" height="30")
+              h5 #{post.postedBy}
             small #{post.formattedCreatedAt}
           hr
           p.card-text(style="white-space:pre; overflow:auto;") #{post.content}
