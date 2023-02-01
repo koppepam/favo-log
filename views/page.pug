@@ -61,7 +61,7 @@ html(lang="ja")
       let meta = document.querySelector('meta[name="posts"]');
       let usermeta = document.querySelector('meta[name="user"]');
       const posts = JSON.parse(meta.content);
-      const user = parseInt(usermeta.content);
+      const user = (usermeta.content);
       const searchInput = document.getElementById('search-input');
       let searchDisplay = document.getElementById('search-display');
 
